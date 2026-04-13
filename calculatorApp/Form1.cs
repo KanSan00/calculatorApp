@@ -8,16 +8,7 @@ namespace calculatorApp
     {
         string strAns = "0";
 
-        public enum Operator
-        {
-            None,
-            Plus,
-            Minus,
-            Multiply,
-            Division,
-        }
-
-        Operator op = Operator.None;
+        private bool isAfterEqual = false;
 
         public Form1()
         {
@@ -90,74 +81,53 @@ namespace calculatorApp
             textAns.Text = strAns;
         }
 
-        /// <summary>
-        /// 1 を押す 👉 strAns は "1"、画面の式は "1"
-        /// + を押す 👉 画面の式は "1+" になるが、strAns は一旦 "0" にリセットされる（OPメソッド内の処理）
-        /// 1 を押す 👉 strAns は純粋な "1" になり、画面の式は "1+1" になる
-        /// = を押す 👉 num2 = int.Parse("1") が安全に実行され、1 + 1 = 2 が計算される！
-        /// </summary>
-        /// <param name="num"></param>
         private void TextFormula(string num)
         {
-            if (strAns != "0")
-            {
-                strAns = textFormula.Text + num;
-            }
-            else
-            {
-                strAns = strAns + num;
-            }
-
-            //初期状態の "0" なら置き換え、それ以外なら後ろにくっつける
             if (textFormula.Text == "0")
             {
+                strAns = num;
                 textFormula.Text = num;
             }
             else
             {
-                textFormula.Text = textFormula.Text + num;
+                strAns = textFormula.Text + num;
+                textFormula.Text = strAns;
             }
         }
 
 
         private void btnPlus_Click(object sender, EventArgs e)
         {
-            OP(Operator.Plus);
+            OP("+");
         }
 
         private void btnMinus_Click(object sender, EventArgs e)
         {
-            OP(Operator.Minus);
+            OP("-");
         }
 
         private void btnMultiply_Click(object sender, EventArgs e)
         {
-            OP(Operator.Multiply);
+            OP("×");
         }
 
         private void btnDivision_Click(object sender, EventArgs e)
         {
-            OP(Operator.Division);
+            OP("÷");
         }
 
-        private void OP(Operator op)
+        private void OP(string op)
         {
-            this.op = op;
-            switch (this.op)
+            if (isAfterEqual)
             {
-                case Operator.Plus:
-                    textFormula.Text = textFormula.Text + "+";
-                    break;
-                case Operator.Minus:
-                    textFormula.Text = textFormula.Text + "-";
-                    break;
-                case Operator.Multiply:
-                    textFormula.Text = textFormula.Text + "×";
-                    break;
-                case Operator.Division:
-                    textFormula.Text = textFormula.Text + "÷";
-                    break;
+                textFormula.Text = strAns + op;
+                isAfterEqual = false;
             }
+            else
+            {
+                textFormula.Text += op;
+            }
+
             strAns = "0";
         }
 
@@ -171,11 +141,13 @@ namespace calculatorApp
                 var result = new DataTable().Compute(formula, null);
                 textAns.Text = result.ToString();
                 strAns = result.ToString();
+                isAfterEqual = true;
             }
             catch
             {
                 textAns.Text = "エラー";
                 strAns = "0";
+                isAfterEqual = false;
             }
         }
     }
