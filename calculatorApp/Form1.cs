@@ -87,6 +87,7 @@ namespace calculatorApp
         private void btnClear_Click(object sender, EventArgs e)
         {
             strAns = "0";
+            textFormula.Text = strAns;
             textAns.Text = strAns;
         }
 
