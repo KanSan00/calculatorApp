@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Windows.Forms;
 
 namespace calculatorApp
@@ -6,8 +7,6 @@ namespace calculatorApp
     public partial class Form1 : Form
     {
         string strAns = "0";
-        int num1 = 0;
-        int num2 = 0;
 
         public enum Operator
         {
@@ -159,32 +158,25 @@ namespace calculatorApp
                     textFormula.Text = textFormula.Text + "÷";
                     break;
             }
-            num1 = int.Parse(strAns);
             strAns = "0";
         }
 
         private void btnEqual_Click(object sender, EventArgs e)
         {
-            num2 = int.Parse(strAns);
-            double ans = 0;
-            switch (this.op)
+            try
             {
-                case Operator.Plus:
-                    ans = (num1 + num2);
-                    break; 
-                case Operator.Minus:
-                    ans = (num1 - num2);
-                    break;
-                case Operator.Multiply:
-                    ans = (num1 * num2);
-                    break;
-                case Operator.Division:
-                    ans = (double)num1 / num2;
-                    break;
+                string formula = textFormula.Text.Replace("×", "*").Replace("÷", "/");
+                //演算子の優先順位などを考慮して文字列を動的に計算する
+                //文字列で表現された数式や集計式を評価し、その結果を返す機能
+                var result = new DataTable().Compute(formula, null);
+                textAns.Text = result.ToString();
+                strAns = result.ToString();
             }
-
-            textAns.Text = ans.ToString();
-            strAns = ans.ToString();
+            catch
+            {
+                textAns.Text = "エラー";
+                strAns = "0";
+            }
         }
     }
 }
